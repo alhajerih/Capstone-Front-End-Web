@@ -1,6 +1,6 @@
 import { getToken } from "@/lib/token";
 
-const baseUrl = `http://localhost:8080`;
+const baseUrl = `http://localhost:8081/api/user/`;
 
 async function getHeaders() {
   const headers = new Headers();

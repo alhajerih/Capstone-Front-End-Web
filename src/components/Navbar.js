@@ -74,14 +74,15 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-8">
-            <button
-              onClick={() => scrollToSection("home")}
+            <Link
+              // onClick={() => scrollToSection("home")}
+              href="/"
               className={`hover:text-gray-900 ${
                 isScrolled ? "text-gray-600" : "text-black"
               }`}
             >
               Home
-            </button>
+            </Link>
             <button
               onClick={() => scrollToSection("how-it-works")}
               className={`hover:text-gray-900 ${

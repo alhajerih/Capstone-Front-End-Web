@@ -64,7 +64,7 @@ const LandingPage = () => {
                   href="/login"
                   className="inline-flex items-center px-8 py-4 bg-purple-600 text-white text-lg font-medium rounded-full hover:bg-purple-700 transition-colors"
                 >
-                  Get Started
+                  Get Unify
                 </Link>
                 <button
                   onClick={() => scrollToSection("features")}
