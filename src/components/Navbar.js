@@ -101,7 +101,7 @@ const Navbar = () => {
             </button>
 
             <Link
-              href="/login"
+              href="/signup"
               className={`px-4 py-2 rounded-md ${
                 isScrolled
                   ? " text-black hover:bg-blue-600"

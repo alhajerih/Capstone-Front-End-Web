@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
+import LoginPage from "../signup/page";
 
 const LandingPage = () => {
   const cardVariants = {
@@ -61,7 +62,7 @@ const LandingPage = () => {
               </p>
               <div className="flex gap-4">
                 <Link
-                  href="/login"
+                  href="/signup"
                   className="inline-flex items-center px-8 py-4 bg-purple-600 text-white text-lg font-medium rounded-full hover:bg-purple-700 transition-colors"
                 >
                   Get Unify
