@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,8 @@ export default function signUp() {
   const [isLoadingCards, setIsLoadingCards] = useState(false);
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
+  const [otpValues, setOtpValues] = useState(new Array(6).fill(""));
+  const otpBoxReference = useRef([]);
 
   // add the data to the userInfo string
   const handleChange = (field) => (e) => {
@@ -57,6 +59,31 @@ export default function signUp() {
       setError(err.message || "Failed to send OTP. Please try again.");
     }
   };
+
+  function handleOtpChange(value, index) {
+    let newArr = [...otpValues];
+    newArr[index] = value;
+    setOtpValues(newArr);
+
+    if (value && index < 5) {
+      otpBoxReference.current[index + 1].focus();
+    }
+
+    // Update userInfo.otp when all digits are filled
+    if (value && index === 5) {
+      const otpValue = newArr.join("");
+      setUserInfo((prev) => ({ ...prev, otp: otpValue }));
+    }
+  }
+
+  function handleBackspaceAndEnter(e, index) {
+    if (e.key === "Backspace" && !e.target.value && index > 0) {
+      otpBoxReference.current[index - 1].focus();
+    }
+    if (e.key === "Enter" && e.target.value && index < 5) {
+      otpBoxReference.current[index + 1].focus();
+    }
+  }
 
   // Step 2: Validate OTP
   const handleOtpSubmit = async (e) => {
@@ -161,14 +188,16 @@ export default function signUp() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center">Join us</h1>
+        <h1 className="text-2xl font-bold text-center">Verify Your Identity</h1>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         {step === 1 && (
           <form onSubmit={handleCivilIdSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="civilId">Civil ID</Label>
+              <Label htmlFor="civilId">
+                Enter your Civil ID to get started.
+              </Label>
               <Input
                 id="civilId"
                 value={userInfo.civilId}
@@ -186,16 +215,33 @@ export default function signUp() {
         )}
 
         {step === 2 && (
-          <form onSubmit={handleOtpSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="otp">6-Digit OTP</Label>
-              <Input
-                id="otp"
-                value={userInfo.otp}
-                onChange={handleChange("otp")}
-                maxLength={6}
-                required
-              />
+          <form onSubmit={handleOtpSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <Label className="block text-center">
+                We've sent a 6-digit code to your phone number ending in ***332.
+              </Label>
+              <div className="flex items-center justify-center gap-4">
+                {otpValues.map((digit, index) => (
+                  <input
+                    key={index}
+                    value={digit}
+                    maxLength={1}
+                    onChange={(e) => handleOtpChange(e.target.value, index)}
+                    onKeyUp={(e) => handleBackspaceAndEnter(e, index)}
+                    ref={(reference) =>
+                      (otpBoxReference.current[index] = reference)
+                    }
+                    className="w-12 h-12 text-center text-xl border-2 rounded-lg focus:border-purple-500 focus:outline-none"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="\d*"
+                    autoComplete="one-time-code"
+                  />
+                ))}
+              </div>
+              {error && (
+                <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+              )}
             </div>
             <Button
               type="submit"

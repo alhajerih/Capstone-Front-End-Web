@@ -18,7 +18,7 @@ const CardShowcase = () => {
   };
 
   const slideAnimation = {
-    x: [-10, 10],
+    x: [-100, 100],
     transition: {
       x: {
         repeat: Infinity,

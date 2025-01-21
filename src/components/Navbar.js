@@ -13,7 +13,12 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const redirectToHome = () => {
+    router.push("/");
+  };
+  const redirectToDashboard = () => {
+    router.push("/dashboard");
+  };
   useEffect(() => {
     // Check if user is logged in using getUser
     const checkAuth = async () => {
@@ -111,18 +116,18 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-8">
-            <Link
-              // onClick={() => scrollToSection("home")}
-              href="/"
-              className={`hover:text-gray-900 ${
+            <button
+              onClick={redirectToHome}
+              // href="/"
+              className={`hover:text-red-900 ${
                 isScrolled ? "text-gray-600" : "text-black"
               }`}
             >
               Home
-            </Link>
+            </button>
             <button
               onClick={() => scrollToSection("how-it-works")}
-              className={`hover:text-gray-900 ${
+              className={`hover:text-red-900 ${
                 isScrolled ? "text-gray-600" : "text-black"
               }`}
             >
@@ -130,7 +135,7 @@ const Navbar = () => {
             </button>
             <button
               onClick={() => scrollToSection("features")}
-              className={`hover:text-gray-900 ${
+              className={`hover:text-red-900 ${
                 isScrolled ? "text-gray-600" : "text-black"
               }`}
             >
@@ -139,14 +144,15 @@ const Navbar = () => {
 
             {isLoggedIn ? (
               <>
-                <Link
-                  href="/dashboard"
-                  className={`hover:text-gray-900 ${
+                <button
+                  // href="/dashboard"
+                  onClick={redirectToDashboard}
+                  className={`hover:text-red-900 ${
                     isScrolled ? "text-gray-600" : "text-black"
                   }`}
                 >
                   Dashboard
-                </Link>
+                </button>
                 <button
                   onClick={handleLogout}
                   className={`px-4 py-2 rounded-md text-red-500 hover:text-red-700`}
@@ -173,7 +179,7 @@ const Navbar = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`focus:outline-none ${
-                isScrolled ? "text-gray-600" : "text-white"
+                isScrolled ? "text-gray-600" : "text-black"
               }`}
             >
               <svg
@@ -215,12 +221,7 @@ const Navbar = () => {
               >
                 Features
               </button>
-              <button
-                onClick={() => scrollToSection("pricing")}
-                className="block w-full text-left text-gray-600 hover:text-gray-900 py-2"
-              >
-                Pricing
-              </button>
+
               {isLoggedIn ? (
                 <>
                   <Link

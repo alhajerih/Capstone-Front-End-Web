@@ -71,6 +71,15 @@ function Login() {
           >
             {isLoading ? "Logging in..." : "Continue"}
           </Button>
+          <p className="text-center text-sm text-gray-500 mt-4">
+            You don't have an account?{" "}
+            <a
+              href="/signup"
+              className="text-[#A855F7] hover:text-purple-600 font-medium"
+            >
+              Get Unify
+            </a>
+          </p>
         </form>
       </div>
     </div>
