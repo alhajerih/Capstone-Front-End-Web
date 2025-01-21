@@ -190,8 +190,8 @@ export async function getUserDetails() {
       throw new Error(error.message || "Failed to fetch user details.");
     }
 
-    const result = await response.json(); // Backend returns a user entity
-    console.log(result);
+    const result = await response.json();
+    console.log("User details:", result);
     return result;
   } catch (error) {
     console.error("Error fetching user details:", error.message);

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import Image from "next/image";
 
 // Import API functions from auth.js
 import {
@@ -131,6 +132,32 @@ export default function signUp() {
     }
   };
 
+  const getCardLogos = (bankName, cardType) => {
+    const logos = [];
+
+    // Bank Logo
+    switch (bankName) {
+      case "Nomo":
+        logos.push("/NomoLogo.png");
+        break;
+      case "Boubyan":
+        logos.push("/BoubyanLogo.png");
+        break;
+    }
+
+    // Card Type Logo
+    switch (cardType) {
+      case "VISA":
+        logos.push("/VisaPlatinumLogo.png");
+        break;
+      case "Mastercard":
+        logos.push("/MasterCardLogo.png");
+        break;
+    }
+
+    return logos;
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
@@ -215,29 +242,81 @@ export default function signUp() {
               <p className="text-center">Loading cards...</p>
             ) : (
               <form onSubmit={handleCardSelection} className="space-y-4">
-                <h2 className="text-lg font-semibold">Select Cards to Link</h2>
-                {availableCards.map((card) => (
-                  <div key={card.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`card-${card.id}`}
-                      checked={selectedCards.includes(card.id)}
-                      onCheckedChange={(checked) => {
-                        setSelectedCards(
-                          checked
-                            ? [...selectedCards, card.id]
-                            : selectedCards.filter((id) => id !== card.id)
-                        );
-                      }}
-                    />
-                    <Label htmlFor={`card-${card.id}`}>
-                      {card.bankName} - {card.cardType} (****
-                      {card.cardNumber.slice(-4)})
-                    </Label>
-                  </div>
-                ))}
+                <h2 className="text-lg font-semibold mb-4">
+                  Select Cards to Link
+                </h2>
+                <div className="space-y-3">
+                  {availableCards.map((card) => (
+                    <div
+                      key={card.id}
+                      className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <Checkbox
+                        id={`card-${card.id}`}
+                        checked={selectedCards.includes(card.id)}
+                        onCheckedChange={(checked) => {
+                          setSelectedCards(
+                            checked
+                              ? [...selectedCards, card.id]
+                              : selectedCards.filter((id) => id !== card.id)
+                          );
+                        }}
+                        className="mr-4"
+                      />
+                      <div className="flex flex-1 items-center gap-4">
+                        {/* Bank Logo */}
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-8 relative">
+                            <Image
+                              src={
+                                getCardLogos(card.bankName, card.cardType)[0]
+                              }
+                              alt={`${card.bankName} logo`}
+                              fill
+                              className="object-contain"
+                              priority
+                            />
+                          </div>
+                          {/* Card Type Logo */}
+                          <div className="w-12 h-8 relative">
+                            <Image
+                              src={
+                                getCardLogos(card.bankName, card.cardType)[1]
+                              }
+                              alt={`${card.cardType} logo`}
+                              fill
+                              className="object-contain"
+                              priority
+                            />
+                          </div>
+                        </div>
+
+                        {/* Card Information */}
+                        <div className="flex flex-1 items-center justify-between">
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {card.bankName} {card.cardType}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              **** **** **** {card.cardNumber.slice(-4)}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-green-600 font-medium">
+                              {card.cardBalance.toLocaleString()} KD
+                            </span>
+                            <div className="text-sm text-gray-500">
+                              Acc: {card.accountNumber}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <Button
                   type="submit"
-                  className="w-full bg-[#A855F7] hover:bg-purple-600 text-white transition-colors"
+                  className="w-full bg-[#A855F7] hover:bg-purple-600 text-white transition-colors mt-6"
                 >
                   Complete Setup
                 </Button>
