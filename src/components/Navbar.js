@@ -2,11 +2,48 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { logout } from "@/app/api/actions/auth";
+import { getUser } from "@/lib/token";
+
 const Navbar = () => {
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in using getUser
+    const checkAuth = async () => {
+      const user = await getUser();
+      setIsLoggedIn(!!user);
+    };
+
+    checkAuth();
+  }, []);
+  // Add a pathname change listener to recheck auth status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const user = await getUser();
+      setIsLoggedIn(!!user);
+    };
+
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsLoggedIn(false);
+      // Handle redirect on client side
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,16 +137,35 @@ const Navbar = () => {
               Features
             </button>
 
-            <Link
-              href="/signup"
-              className={`px-4 py-2 rounded-md ${
-                isScrolled
-                  ? " text-black hover:bg-blue-600"
-                  : " text-blue-500 hover:bg-gray-100"
-              }`}
-            >
-              Join us
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className={`hover:text-gray-900 ${
+                    isScrolled ? "text-gray-600" : "text-black"
+                  }`}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className={`px-4 py-2 rounded-md text-red-500 hover:text-red-700`}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/signup"
+                className={`px-4 py-2 rounded-md ${
+                  isScrolled
+                    ? " text-black hover:bg-blue-600"
+                    : " text-blue-500 hover:bg-gray-100"
+                }`}
+              >
+                Join us
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -165,12 +221,29 @@ const Navbar = () => {
               >
                 Pricing
               </button>
-              <Link
-                href="/login"
-                className="block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              >
-                Join us
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="block w-full text-left text-gray-600 hover:text-gray-900 py-2"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left text-red-500 hover:text-red-700 py-2"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/signup"
+                  className="block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                >
+                  Join us
+                </Link>
+              )}
             </div>
           </div>
         )}

@@ -4,11 +4,15 @@ import { baseUrl, getHeaders } from "./config";
 import { revalidatePath } from "next/cache";
 import { deleteToken, setToken } from "@/lib/token";
 import { headers } from "next/headers";
-import { use } from "react";
 
 export async function logout() {
-  await deleteToken();
-  redirect("/");
+  try {
+    await deleteToken(); // This deletes the token cookie
+    return true; // Return success
+  } catch (error) {
+    console.error("Error during logout:", error);
+    throw error;
+  }
 }
 
 export async function generateOTP(civilId) {
@@ -83,14 +87,9 @@ export async function registerUser(civilId, username, password) {
 export async function login(username, password) {
   try {
     const payload = { username, password };
-
-    // Explicitly set headers without Authorization
     const headers = {
       "Content-Type": "application/json",
     };
-
-    console.log("Request Payload:", payload);
-    console.log("Request Headers:", headers);
 
     const response = await fetch(`${baseUrl}login`, {
       method: "POST",
@@ -104,7 +103,10 @@ export async function login(username, password) {
       throw new Error(responseText || "Failed to login.");
     }
 
-    console.log("Login successful, token:", responseText);
+    // Store the token
+    await setToken(responseText);
+
+    console.log("Token: ", responseText);
     return responseText;
   } catch (error) {
     console.error("Error logging in user:", error.message);
