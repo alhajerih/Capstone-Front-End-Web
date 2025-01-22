@@ -3,7 +3,76 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import CardShowcase from "./CardShowcase";
+import { useEffect, useRef } from "react";
+
 function Landing() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Set canvas size
+    const updateCanvasSize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
+
+    // Animation variables
+    let frame = 0;
+    const fontSize = Math.min(window.innerWidth / 15, 72); // Larger font size
+    const text1 = "One Card,";
+    const text2 = "Endless";
+    const text3 = "Possibilities";
+
+    function animate() {
+      if (!ctx || !canvas) return;
+
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Set text properties
+      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.textAlign = "left";
+
+      // Calculate text positions
+      const margin = canvas.width * 0.1; // 10% margin
+      const x = margin;
+      const y = canvas.height / 2;
+
+      // Draw first line in black
+      ctx.fillStyle = "black";
+      ctx.fillText(text1, x, y - fontSize);
+
+      // Draw "Endless" with color wave effect
+      const letters1 = text2.split("");
+      letters1.forEach((letter, i) => {
+        const letterX = x + ctx.measureText(text2.substring(0, i)).width;
+        const hue = (frame * 0.5 + i * 8) % 380;
+        ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
+        ctx.fillText(letter, letterX, y);
+      });
+
+      // Draw "Possibilities" in black
+      ctx.fillStyle = "black";
+      ctx.fillText(text3, x, y + fontSize);
+
+      frame++;
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize);
+    };
+  }, []);
+
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -14,18 +83,17 @@ function Landing() {
   return (
     <>
       {/* Hero Section */}
-      <section className="  relative overflow-hidden py-6 ">
+      <section className="relative overflow-hidden py-6 mt-8">
         <div className="container mx-auto px-4 justify-center h-full flex items-center">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Left content */}
-            <div className="space-y-8">
-              <h1 className="text-6xl md:text-7xl font-bold text-black">
-                One Card,
-                <br />
-                <span className="text-purple-600">Endless</span>
-                <br />
-                Possibilities
-              </h1>
+            <div className="space-y-6">
+              <div className="h-[300px] relative">
+                <canvas
+                  ref={canvasRef}
+                  className="w-full h-full absolute inset-0"
+                />
+              </div>
               <p className="text-xl text-gray-600 max-w-lg">
                 Combine all your cards into one secure digital wallet.
                 Experience seamless payments and complete control over your
