@@ -229,7 +229,7 @@ function Landing() {
       <CardShowcase />
 
       {/* How It Works Section */}
-      <div className="max-w-6xl mx-auto px-4 py-16" ref={ref}>
+      <div id="how-it-works" className="max-w-6xl mx-auto px-4 py-16" ref={ref}>
         <motion.div
           key="header"
           initial={{ opacity: 0, y: 20 }}
