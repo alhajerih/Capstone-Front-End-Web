@@ -81,7 +81,7 @@ function Landing() {
   };
 
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { margin: "-100px" });
 
   const steps = [
     {
@@ -231,6 +231,7 @@ function Landing() {
       {/* How It Works Section */}
       <div className="max-w-6xl mx-auto px-4 py-16" ref={ref}>
         <motion.div
+          key="header"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
@@ -244,6 +245,7 @@ function Landing() {
         </motion.div>
 
         <motion.div
+          key="steps-container"
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
@@ -252,6 +254,7 @@ function Landing() {
           {/* Progress Line */}
           <div className="absolute top-6 left-0 right-0 h-0.5 bg-gray-200 hidden md:block ml-40">
             <motion.div
+              key="progress-line"
               initial={{ scaleX: 0 }}
               animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
@@ -261,12 +264,13 @@ function Landing() {
 
           {steps.map((step, index) => (
             <motion.div
-              key={step.number}
+              key={`step-${step.number}-${isInView}`}
               variants={itemVariants}
               className="relative"
             >
               {/* Step Number */}
               <motion.div
+                key={`number-${step.number}-${isInView}`}
                 initial={{ scale: 0 }}
                 animate={isInView ? { scale: 1 } : { scale: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
@@ -277,8 +281,9 @@ function Landing() {
 
               {/* Card */}
               <motion.div
+                key={`card-${step.number}-${isInView}`}
                 whileHover={{ y: -5 }}
-                className="bg-card p-8 rounded-3xl shadow-lg border border-border h-full transform-gpu  "
+                className="bg-card p-8 rounded-3xl shadow-lg border border-border h-full transform-gpu"
               >
                 <svg className="">{step.icon}</svg>
                 <h3 className="font-semibold text-xl mb-4">{step.title}</h3>
