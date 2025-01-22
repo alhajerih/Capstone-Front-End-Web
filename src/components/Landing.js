@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import CardShowcase from "./CardShowcase";
 import { useEffect, useRef } from "react";
-
+import { CreditCard, Wallet2, BarChart3 } from "lucide-react";
 function Landing() {
   const canvasRef = useRef(null);
 
@@ -78,6 +78,54 @@ function Landing() {
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  const steps = [
+    {
+      number: 1,
+      title: "Step 1: Add Your Cards",
+      description:
+        "Easily add all your existing cards to the app by entering your civil ID .",
+      icon: <CreditCard className="size-8" />,
+    },
+    {
+      number: 2,
+      title: "Step 2: Create Wallets",
+      description:
+        "Organize your cards into different wallets based on your preferences and needs. Customize each wallet with a unique name and color.",
+      icon: <Wallet2 className="size-8" />,
+    },
+    {
+      number: 3,
+      title: "Step 3: Manage Transactions",
+      description:
+        "Track and manage your transactions within each wallet. Monitor your spending and stay on top of your finances effortlessly.",
+      icon: <BarChart3 className="size-8" />,
+    },
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
   };
 
   return (
@@ -181,74 +229,65 @@ function Landing() {
       <CardShowcase />
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 ">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-6 text-gray-800">
-            How It Works
-          </h2>
-          <p className="text-center text-gray-600 mb-12">
+      <div className="max-w-6xl mx-auto px-4 py-16" ref={ref}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-4xl font-bold mb-4">How It Works</h2>
+          <p className="text-muted-foreground">
             Follow these steps to combine your cards and create wallets using
             the app:
           </p>
+        </motion.div>
 
-          <div className="relative">
-            {/* Progress Line */}
-            <div className="absolute inset-x-0 top-[25px] h-0.5 bg-black ml-40"></div>
-
-            <div className="grid grid-cols-3 gap-8 relative">
-              {/* Step 1 */}
-              <div className="text-center relative">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-6 relative z-10">
-                  1
-                </div>
-                <div className="bg-gray-200 rounded-3xl p-6">
-                  <h3 className="text-lg font-semibold mb-2 text-black">
-                    Step 1: Add Your Cards
-                  </h3>
-                  <p className="text-gray-800 text-sm">
-                    Easily add all your existing cards to the app by entering
-                    your civil ID .
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="text-center relative">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-6 relative z-10">
-                  2
-                </div>
-                <div className="bg-gray-200 rounded-3xl p-6">
-                  <h3 className="text-lg font-semibold mb-2 text-black">
-                    Step 2: Create Wallets
-                  </h3>
-                  <p className="text-gray-800 text-sm">
-                    Organize your cards into different wallets based on your
-                    preferences and needs. Customize each wallet with a unique
-                    name and color.
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div className="text-center relative">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-6 relative z-10">
-                  3
-                </div>
-                <div className="bg-gray-200 rounded-3xl p-6">
-                  <h3 className="text-lg font-semibold mb-2 text-black">
-                    Step 3: Manage Transactions
-                  </h3>
-                  <p className="text-gray-800 text-sm">
-                    Track and manage your transactions within each wallet.
-                    Monitor your spending and stay on top of your finances
-                    effortlessly.
-                  </p>
-                </div>
-              </div>
-            </div>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="relative grid md:grid-cols-3 gap-8 mt-8"
+        >
+          {/* Progress Line */}
+          <div className="absolute top-6 left-0 right-0 h-0.5 bg-gray-200 hidden md:block ml-40">
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="h-full bg-primary origin-left"
+            />
           </div>
-        </div>
-      </section>
+
+          {steps.map((step, index) => (
+            <motion.div
+              key={step.number}
+              variants={itemVariants}
+              className="relative"
+            >
+              {/* Step Number */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={isInView ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                className="size-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold mb-6 mx-auto relative z-10"
+              >
+                {step.number}
+              </motion.div>
+
+              {/* Card */}
+              <motion.div
+                whileHover={{ y: -5 }}
+                className="bg-card p-8 rounded-3xl shadow-lg border border-border h-full transform-gpu  "
+              >
+                <svg className="">{step.icon}</svg>
+                <h3 className="font-semibold text-xl mb-4">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
+              </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
 
       {/* Safe Travels Section */}
       <section id="features" className="py-20 ">
